@@ -2,7 +2,10 @@ import cv2
 import mediapipe as mp
 import pyautogui
 import time
+from utils import HandGestureProcessor, draw_info_box
 
+# Initialize the processor
+gesture_engine = HandGestureProcessor()
 # --- Initialization ---
 mp_hands = mp.solutions.hands
 hands = mp_hands.Hands(
@@ -20,32 +23,7 @@ pyautogui.FAILSAFE = True
 cooldown_time = 1.5  # Seconds between triggers
 last_trigger_time = 0
 
-def get_gesture(hand_landmarks):
-    """
-    Logic: Compare the Y-coordinate of the tip to the middle joint (PIP).
-    In OpenCV/MediaPipe, a LOWER Y-value means the point is HIGHER on the screen.
-    """
-    # Landmark IDs: Index=8, Middle=12, Ring=16, Pinky=20
-    # Joint IDs: Index_PIP=6, Middle_PIP=10, Ring_PIP=14, Pinky_PIP=18
-    
-    fingers = []
-    # Index finger
-    fingers.append(hand_landmarks.landmark[8].y < hand_landmarks.landmark[6].y)
-    # Middle finger
-    fingers.append(hand_landmarks.landmark[12].y < hand_landmarks.landmark[10].y)
-    # Ring finger
-    fingers.append(hand_landmarks.landmark[16].y < hand_landmarks.landmark[14].y)
-    # Pinky finger
-    fingers.append(hand_landmarks.landmark[20].y < hand_landmarks.landmark[18].y)
 
-    # Logic Mapping
-    if fingers[0] and not any(fingers[1:]):
-        return "NEXT"
-    elif fingers[0] and fingers[1] and not any(fingers[2:]):
-        return "PREVIOUS"
-    elif not any(fingers):
-        return "EXIT"
-    return None
 
 # --- Main Loop ---
 cap = cv2.VideoCapture(0)

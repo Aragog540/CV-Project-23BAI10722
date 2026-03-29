@@ -1,1 +1,10 @@
 
+# Core Computer Vision and AI
+opencv-python>=4.8.0
+mediapipe>=0.10.0
+
+# System Automation
+pyautogui>=0.9.54
+
+# Standard Utilities
+numpy>=1.24.0
